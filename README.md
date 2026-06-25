@@ -112,3 +112,11 @@ The frontend is organized by feature because the application currently has one m
 - Task name uniqueness is case-insensitive.
 - Priority must be zero or a positive number.
 - Delete is allowed only when the task status is completed.
+
+## Running Playwright Integration Tests
+
+Start the backend first:
+
+```bash
+cd backend
+dotnet run --project BarclaysTodo.Api

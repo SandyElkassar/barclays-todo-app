@@ -1,6 +1,8 @@
-using BarclaysTodo.Api.Models;
+using BarclaysTodo.Application.Dtos;
+using BarclaysTodo.Application.Services;
+using BarclaysTodo.Domain;
 
-namespace BarclaysTodo.Api.Validations;
+namespace BarclaysTodo.Application.Validations;
 
 public class TodoValidator: ITodoValidator
 {

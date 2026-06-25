@@ -1,4 +1,4 @@
-namespace BarclaysTodo.Api.Models;
+﻿namespace BarclaysTodo.Domain;
 
 public enum TodoStatus
 {

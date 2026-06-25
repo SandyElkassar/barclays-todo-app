@@ -1,5 +1,5 @@
-using BarclaysTodo.Api.Models;
-using BarclaysTodo.Api.Services;
+using BarclaysTodo.Application.Dtos;
+using BarclaysTodo.Application.Services;
 
 namespace BarclaysTodo.Api.Endpoints;
 

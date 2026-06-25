@@ -1,29 +1,37 @@
-using BarclaysTodo.Api.Models;
-using BarclaysTodo.Api.Storage;
-using BarclaysTodo.Api.Validations;
+using BarclaysTodo.Application.Dtos;
+using BarclaysTodo.Application.Storage;
+using BarclaysTodo.Application.Validations;
+using BarclaysTodo.Domain;
 
-namespace BarclaysTodo.Api.Services;
+namespace BarclaysTodo.Application.Services;
 
 public sealed class TodoService(ITodoRepository repository, ITodoValidator validator) : ITodoService
 {
-    public IReadOnlyCollection<TodoItem> GetAll()
+    public IReadOnlyCollection<TodoDto> GetAll()
     {
-        return repository.GetAll();
+        return repository
+            .GetAll()
+            .Select(TodoDto.FromDomain)
+            .ToList();
     }
 
-    public TodoItem? GetById(Guid id)
+    public ServiceResult<TodoDto> GetById(Guid id)
     {
-        return repository.GetById(id);
+        var todo = repository.GetById(id);
+
+        return todo is null
+            ? ServiceResult<TodoDto>.NotFoundResult("Task was not found.")
+            : ServiceResult<TodoDto>.Success(TodoDto.FromDomain(todo));
     }
 
-    public ServiceResult<TodoItem> Create(CreateTodoRequest request)
+    public ServiceResult<TodoDto> Create(CreateTodoRequest request)
     {
         var existingTodos = repository.GetAll();
         var validationResult = validator.ValidateForCreate(request, existingTodos);
 
         if (!validationResult.IsValid)
         {
-            return ServiceResult<TodoItem>.Failure(validationResult.Errors);
+            return ServiceResult<TodoDto>.Failure(validationResult.Errors);
         }
 
         var now = DateTime.UtcNow;
@@ -40,16 +48,16 @@ public sealed class TodoService(ITodoRepository repository, ITodoValidator valid
 
         var created = repository.Add(todo);
 
-        return ServiceResult<TodoItem>.Success(created);
+        return ServiceResult<TodoDto>.Success(TodoDto.FromDomain(created));
     }
 
-    public ServiceResult<TodoItem> Update(Guid id, UpdateTodoRequest request)
+    public ServiceResult<TodoDto> Update(Guid id, UpdateTodoRequest request)
     {
         var existingTodo = repository.GetById(id);
 
         if (existingTodo is null)
         {
-            return ServiceResult<TodoItem>.NotFoundResult("Task was not found.");
+            return ServiceResult<TodoDto>.NotFoundResult("Task was not found.");
         }
 
         var existingTodos = repository.GetAll();
@@ -57,7 +65,7 @@ public sealed class TodoService(ITodoRepository repository, ITodoValidator valid
 
         if (!validationResult.IsValid)
         {
-            return ServiceResult<TodoItem>.Failure(validationResult.Errors);
+            return ServiceResult<TodoDto>.Failure(validationResult.Errors);
         }
 
         existingTodo.Name = request.Name!.Trim();
@@ -68,22 +76,22 @@ public sealed class TodoService(ITodoRepository repository, ITodoValidator valid
         var updated = repository.Update(existingTodo);
 
         return updated is null
-            ? ServiceResult<TodoItem>.NotFoundResult("Task was not found.")
-            : ServiceResult<TodoItem>.Success(updated);
+            ? ServiceResult<TodoDto>.NotFoundResult("Task was not found.")
+            : ServiceResult<TodoDto>.Success(TodoDto.FromDomain(updated));
     }
 
-    public ServiceResult<TodoItem> Delete(Guid id)
+    public ServiceResult Delete(Guid id)
     {
         var existingTodo = repository.GetById(id);
 
         if (existingTodo is null)
         {
-            return ServiceResult<TodoItem>.NotFoundResult("Task was not found.");
+            return ServiceResult.NotFoundResult("Task was not found.");
         }
 
         if (existingTodo.Status != TodoStatus.Completed)
         {
-            return ServiceResult<TodoItem>.Failure(new[]
+            return ServiceResult.Failure(new[]
             {
                 "Only completed tasks can be deleted."
             });
@@ -91,6 +99,6 @@ public sealed class TodoService(ITodoRepository repository, ITodoValidator valid
 
         repository.Delete(id);
 
-        return ServiceResult<TodoItem>.Success(existingTodo);
+        return ServiceResult.Success();
     }
 }

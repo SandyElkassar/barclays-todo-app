@@ -1,4 +1,6 @@
-namespace BarclaysTodo.Api.Models;
+using BarclaysTodo.Domain;
+
+namespace BarclaysTodo.Application.Dtos;
 
 public record UpdateTodoRequest(
     string? Name,

@@ -1,7 +1,7 @@
 using BarclaysTodo.Api.Endpoints;
-using BarclaysTodo.Api.Services;
-using BarclaysTodo.Api.Storage;
-using BarclaysTodo.Api.Validations;
+using BarclaysTodo.Application.Services;
+using BarclaysTodo.Application.Storage;
+using BarclaysTodo.Application.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,4 +1,4 @@
-namespace BarclaysTodo.Api.Models;
+namespace BarclaysTodo.Application.Services;
 
 public class ValidationResult
 {

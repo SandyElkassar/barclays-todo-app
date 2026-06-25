@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BarclaysTodo.Domain\BarclaysTodo.Domain.csproj" />
+    <ProjectReference Include="..\BarclaysTodo.Application\BarclaysTodo.Application.csproj" />
+  </ItemGroup>
+
 </Project>

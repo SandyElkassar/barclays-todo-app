@@ -1,7 +1,8 @@
-﻿using BarclaysTodo.Api.Models;
-using BarclaysTodo.Api.Services;
-using BarclaysTodo.Api.Storage;
-using BarclaysTodo.Api.Validations;
+﻿using BarclaysTodo.Application.Dtos;
+using BarclaysTodo.Application.Services;
+using BarclaysTodo.Application.Storage;
+using BarclaysTodo.Application.Validations;
+using BarclaysTodo.Domain;
 
 namespace BarclaysTodo.Tests;
 
@@ -142,16 +143,25 @@ public sealed class TodoServiceTests
     {
         var service = CreateService();
 
-        var created = service.Create(new CreateTodoRequest(
-            Name: "Buy milk",
-            Priority: 1,
-            Status: TodoStatus.Completed
-        ));
+        var createResult = service.Create(new CreateTodoRequest(
+            $"Completed task {Guid.NewGuid()}",
+            1,
+            TodoStatus.Completed));
 
-        var result = service.Delete(created.Value!.Id);
+        Assert.True(createResult.IsSuccess);
+        Assert.NotNull(createResult.Value);
 
-        Assert.True(result.IsSuccess);
-        Assert.Null(service.GetById(created.Value.Id));
+        var deleteResult = service.Delete(createResult.Value.Id);
+
+        Assert.True(deleteResult.IsSuccess);
+        Assert.False(deleteResult.NotFound);
+        Assert.Empty(deleteResult.Errors);
+
+        var getResult = service.GetById(createResult.Value.Id);
+
+        Assert.False(getResult.IsSuccess);
+        Assert.True(getResult.NotFound);
+        Assert.Contains("Task was not found.", getResult.Errors);
     }
 
     [Fact]

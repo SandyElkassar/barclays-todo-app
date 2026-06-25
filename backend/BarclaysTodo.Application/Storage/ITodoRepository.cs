@@ -1,6 +1,6 @@
-using BarclaysTodo.Api.Models;
+using BarclaysTodo.Domain;
 
-namespace BarclaysTodo.Api.Storage;
+namespace BarclaysTodo.Application.Storage;
 
 public interface ITodoRepository
 {
