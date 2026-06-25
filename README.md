@@ -53,31 +53,46 @@ dotnet restore
 dotnet build
 dotnet test
 dotnet run --project BarclaysTodo.Api
+```
 
 The API runs on the port shown in the terminal.
 
 Example:
 
+```text
 http://localhost:5115
-Running the Frontend
+```
+
+## Running the Frontend
 
 In a second terminal:
 
+```bash
 cd frontend/barclays-todo-ui
 npm install
 npm run dev
+```
 
 Open:
 
+```text
 http://localhost:5173
+```
 
 If the backend runs on a different port, update the API URL in:
 
+```text
 frontend/barclays-todo-ui/src/features/todos/todoApi.ts
-Running Frontend Tests
+```
+
+## Running Frontend Tests
+
+```bash
 cd frontend/barclays-todo-ui
 npm run test:run
-Design Notes
+```
+
+## Design Notes
 
 The backend uses ASP.NET Core Minimal APIs because the API surface is small.
 
@@ -91,8 +106,9 @@ The validator is separated from the service because business may ask for more va
 
 The frontend is organized by feature because the application currently has one main feature: TODO management. If the application grew, shared API clients, reusable components, and common types could be extracted into shared folders.
 
-Assumptions
-In-memory data is reset when the backend application restarts.
-Task name uniqueness is case-insensitive.
-Priority must be zero or a positive number.
-Delete is allowed only when the task status is completed.
+## Assumptions
+
+- In-memory data is reset when the backend application restarts.
+- Task name uniqueness is case-insensitive.
+- Priority must be zero or a positive number.
+- Delete is allowed only when the task status is completed.
