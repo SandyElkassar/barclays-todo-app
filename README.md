@@ -12,6 +12,7 @@ A small full-stack TODO application built with React + TypeScript and ASP.NET Co
 - In-memory server-side storage
 - Backend tests with xUnit
 - Frontend tests with Vitest
+- Playwright integration tests
 
 ## Validation Rules
 
@@ -29,8 +30,8 @@ A small full-stack TODO application built with React + TypeScript and ASP.NET Co
 
 ### Backend
 
-- ASP.NET Core
-- Minimal APIs
+- ASP.NET Core Minimal APIs
+- Separate API, Application, and Domain projects
 - xUnit
 - In-memory repository
 - No Entity Framework
@@ -42,6 +43,7 @@ A small full-stack TODO application built with React + TypeScript and ASP.NET Co
 - Vite
 - Vitest
 - React Testing Library
+- Playwright
 
 ## Running the Backend
 
@@ -85,33 +87,12 @@ If the backend runs on a different port, update the API URL in:
 frontend/barclays-todo-ui/src/features/todos/todoApi.ts
 ```
 
-## Running Frontend Tests
+## Running Frontend Unit Tests
 
 ```bash
 cd frontend/barclays-todo-ui
 npm run test:run
 ```
-
-## Design Notes
-
-The backend uses ASP.NET Core Minimal APIs because the API surface is small.
-
-Business logic, validation, and in-memory storage are separated into services to keep the code testable and easy to extend.
-
-The in-memory repository is registered as a singleton so data is kept while the API is running. The repository protects the in-memory collection with locking.
-
-Validation is implemented on both client and server. Server-side validation is the source of truth.
-
-The validator is separated from the service because business may ask for more validation rules in the future.
-
-The frontend is organized by feature because the application currently has one main feature: TODO management. If the application grew, shared API clients, reusable components, and common types could be extracted into shared folders.
-
-## Assumptions
-
-- In-memory data is reset when the backend application restarts.
-- Task name uniqueness is case-insensitive.
-- Priority must be zero or a positive number.
-- Delete is allowed only when the task status is completed.
 
 ## Running Playwright Integration Tests
 
@@ -120,3 +101,36 @@ Start the backend first:
 ```bash
 cd backend
 dotnet run --project BarclaysTodo.Api
+```
+
+Then, in a second terminal:
+
+```bash
+cd frontend/barclays-todo-ui
+npm run test:e2e
+```
+
+## Design Notes
+
+The backend is split into API, Application, and Domain projects.
+
+The API layer handles HTTP endpoints and delegates business operations to the application service.
+
+The Application layer contains service logic, validation, DTOs, and the in-memory repository abstraction/implementation.
+
+The Domain layer contains the core TODO model and status enum.
+
+The API returns application DTOs rather than exposing the domain entity directly.
+
+Validation is implemented on both client and server. Server-side validation is the source of truth.
+
+The in-memory repository is registered as a singleton so data is kept while the API is running. The repository protects the in-memory collection with locking.
+
+The frontend is organized by feature because the application currently has one main feature: TODO management.
+
+## Assumptions
+
+- In-memory data is reset when the backend application restarts.
+- Task name uniqueness is case-insensitive.
+- Priority must be zero or a positive number.
+- Delete is allowed only when the task status is completed.
