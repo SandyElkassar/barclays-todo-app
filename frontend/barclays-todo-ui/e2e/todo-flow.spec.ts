@@ -46,12 +46,28 @@ test.describe('TODO application', () => {
         await page.getByLabel('Priority').fill('1');
         await page.getByRole('button', { name: 'Add task' }).click();
 
-        await expect(page.getByText(taskName)).toBeVisible();
+        const row = page.getByRole('row', { name: new RegExp(taskName) });
+
+        await expect(row).toBeVisible();
 
         await page.getByLabel('Name').fill(taskName.toLowerCase());
         await page.getByLabel('Priority').fill('2');
         await page.getByRole('button', { name: 'Add task' }).click();
 
         await expect(page.getByText('A task with the same name already exists.')).toBeVisible();
+
+        await row.getByRole('button', { name: 'Edit' }).click();
+
+        await page.getByLabel('Status').selectOption('2');
+        await page.getByRole('button', { name: 'Save changes' }).click();
+
+        const completedRow = page.getByRole('row', { name: new RegExp(taskName) });
+
+        await expect(completedRow).toContainText('Completed');
+        await expect(completedRow.getByRole('button', { name: 'Delete' })).not.toBeDisabled();
+
+        await completedRow.getByRole('button', { name: 'Delete' }).click();
+
+        await expect(page.getByText(taskName)).not.toBeVisible();
     });
 });
