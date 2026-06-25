@@ -96,10 +96,3 @@ In-memory data is reset when the backend application restarts.
 Task name uniqueness is case-insensitive.
 Priority must be zero or a positive number.
 Delete is allowed only when the task status is completed.
-
-Then commit and push:
-
-```bash
-git add README.md
-git commit -m "Add README"
-git push
