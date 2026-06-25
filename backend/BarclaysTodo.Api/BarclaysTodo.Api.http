@@ -1,6 +1,3 @@
 @BarclaysTodo.Api_HostAddress = http://localhost:5115
 
-GET {{BarclaysTodo.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
 ###
